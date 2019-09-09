@@ -42,7 +42,6 @@ bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[])
     hashentry->next = hashtable[hashval];
     hashtable[hashval] = hashentry;
     hashsize++; 
-    printf("%s\n", hashtable[hashval]->word);
   }  
 
   fclose(wordlist);
@@ -55,13 +54,20 @@ bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[])
 bool check_word(const char* word, hashmap_t hashtable[])
 {
 
+  int index = hash_function(word);
+  if (strcmp(word, hashtable[index]->word) != 0)
+  {
+    printf ("%s, %s\n", word, hashtable[index]->word);
+
+  }  
+
 }
 
 
 int main(int argc, char** argv)
 {
 
-  if (argc != 2)
+  if (argc != 3)
   {
     return 3;
   }
@@ -72,6 +78,7 @@ int main(int argc, char** argv)
   }
 
   printf("loaded %d words \n", hashsize);
+  check_word(argv[2],hashtable);
   return 0;
 
 }
