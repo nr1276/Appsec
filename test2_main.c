@@ -31,14 +31,24 @@ START_TEST(test_check_words_normal)
 {
     hashmap_t hashtable[HASH_SIZE];
     load_dictionary(DICTIONARY, hashtable);
-    char* expected[3];
+    char* expected[11];
     expected[0] = "sogn";
     expected[1] = "skyn";
     expected[2] = "betta";
+    expected[3] = "missssssspell";
+    expected[4] = "gooalzl";
+    expected[5] = "superio'r";
+    expected[6] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    expected[7] = "overfl";
+    expected[8] = "thisis"; 
+    expected[9] = "baddly";
+    expected[10] = "spelty";
+    expected[11] = "whatzzz";
+
     char *misspelled[MAX_MISSPELLED];
-    FILE *fp = fopen("test1.txt", "r");
+    FILE *fp = fopen("test2.txt", "r");
     int num_misspelled = check_words(fp, hashtable, misspelled);
-    ck_assert(num_misspelled == 3);
+    ck_assert(num_misspelled == 11);
     bool test = strlen(misspelled[0]) == strlen(expected[0]);
     int len1 = strlen(misspelled[0]);
     int len2 = strlen(expected[0]);
@@ -46,6 +56,17 @@ START_TEST(test_check_words_normal)
     ck_assert_msg(strcmp(misspelled[0], expected[0]) == 0);
     ck_assert_msg(strcmp(misspelled[1], expected[1]) == 0);
     ck_assert_msg(strcmp(misspelled[2], expected[2]) == 0);
+    ck_assert_msg(strcmp(misspelled[3], expected[3]) == 0);
+    ck_assert_msg(strcmp(misspelled[4], expected[4]) == 0);
+    ck_assert_msg(strcmp(misspelled[5], expected[5]) == 0);
+    ck_assert_msg(strcmp(misspelled[6], expected[6]) == 0);
+    ck_assert_msg(strcmp(misspelled[7], expected[7]) == 0);
+    ck_assert_msg(strcmp(misspelled[8], expected[8]) == 0);
+    ck_assert_msg(strcmp(misspelled[9], expected[9]) == 0);
+    ck_assert_msg(strcmp(misspelled[10], expected[10]) == 0);
+    ck_assert_msg(strcmp(misspelled[11], expected[11]) == 0);
+
+
 }
 END_TEST
 
