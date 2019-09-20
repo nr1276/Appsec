@@ -2,6 +2,8 @@ os: linux
 
 compiler: gcc
 
-before script: sudo apt-get update; sudo apt-get install check
+before install: 
+- sudo apt-get update
+- sudo apt-get install check
 
 script: make test
