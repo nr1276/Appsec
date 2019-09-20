@@ -13,6 +13,6 @@ Matrix:
 compiler: gcc
 
 before script: 
- - if [ "$(uname)" = "Linux" ]; then sudo apt-get update; sudo apt-get install check
+ - sudo apt-get update; sudo apt-get install check
 
 script: make test
