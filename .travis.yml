@@ -1,2 +1,2 @@
 compiler: gcc
-script: ./test_main
+script: make test
