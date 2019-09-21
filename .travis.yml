@@ -3,13 +3,6 @@ os: linux
 compiler: gcc
 
 script: 
- - mkdir check; cd check
- - git clone https://github.com/libcheck/check
- - autoreconf --install
- - ./configure
- - make
- - make check
- - make install
- - sudo ldconfig
- - cd /
+ - sudo apt-get update
+ - sudo apt-get install check
  - make test
