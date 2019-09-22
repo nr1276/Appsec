@@ -36,7 +36,7 @@ START_TEST(test_check_words_normal)
     expected[1] = "skyn";
     expected[2] = "betta";
     expected[3] = "missssssspell";
-    expected[4] = "gooalzl";
+    expected[4] = "gooazl";
     expected[5] = "superio'r";
     expected[6] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     expected[7] = "overfl";
@@ -48,7 +48,7 @@ START_TEST(test_check_words_normal)
     char *misspelled[MAX_MISSPELLED];
     FILE *fp = fopen("test2.txt", "r");
     int num_misspelled = check_words(fp, hashtable, misspelled);
-    ck_assert(num_misspelled == 11);
+    ck_assert(num_misspelled == 12);
     bool test = strlen(misspelled[0]) == strlen(expected[0]);
     int len1 = strlen(misspelled[0]);
     int len2 = strlen(expected[0]);

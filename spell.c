@@ -1,6 +1,7 @@
 // Naresh Ramlogan, nr1276
 
 #include "dictionary.h"
+#include "strip.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -18,8 +19,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char* misspelled[])
   int wordlength = 0; // track wordlength
   int newlength = 0; // track new length of word after stripping chars
   char c = '\0';  // row read in from file
-  char *word = malloc(sizeof(char)*(LENGTH+1));
-  char *tempword;
+  char word[LENGTH+1];
   int i = 0;
   int source = 0; // used to strip charcters before and after word
   int destination = 0; // used to strip characters before and after word
@@ -32,7 +32,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char* misspelled[])
      if ( c == EOF ) return num_misspelled;
      i = 0;
      do {
-        if(i <= LENGTH)
+        if(i <= LENGTH && !invalidChar(c))
 	{
 	   word[i++] = c;
         }
@@ -54,6 +54,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char* misspelled[])
        // printf(" %s \n", word);
      }      
 
+       strip(word, IS_CTRL);
        wordlength = strlen(word);
        newlength = wordlength;
        source = 0;
@@ -81,22 +82,25 @@ int check_words(FILE* fp, hashmap_t hashtable[], char* misspelled[])
 
        //printf("%s\n ", word); 
        // Check the word against hashtable    
+       if (word[0] == '\0') continue;
        if (!check_word(word, hashtable))
        {
-        //printf("%s %d \n", word, num_misspelled;
-	tempword = malloc(sizeof(char)*(LENGTH+1));
-	strcpy(tempword,word);
-        misspelled[num_misspelled] = tempword;
-//	printf("%s \n", misspelled[num_misspelled]);
+        //printf("%s %d \n", word, num_misspelled);
+	misspelled[num_misspelled] = malloc(sizeof(word)+1);
+	strcpy(misspelled[num_misspelled],word);
 	num_misspelled++;	
         
 
         }
-     
+
+        for (int j = 0; j < (LENGTH + 1); j++)
+	{
+            word[j] = '\0';
+           
+	}	
 
   }
  
-   free(word);
   //printf("%d :blahah", num_misspelled);
   return num_misspelled;
 }
@@ -106,8 +110,11 @@ int check_words(FILE* fp, hashmap_t hashtable[], char* misspelled[])
 
 bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[])
 {
+    
   char row[LENGTH+1];
   FILE *wordlist = fopen(dictionary_file, "r");
+  char word[LENGTH+1];
+  for (int i = 0; i < HASH_SIZE; i++) hashtable[i] = NULL;
 
 
   
@@ -120,53 +127,66 @@ bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[])
   while (fgets(row, sizeof row, wordlist) != NULL)
   {
     // Read word from line and strip spaces
-    char *word = row + strspn(row, "\t"); 
+    strcpy(word, (row + strspn(row, "\t"))); 
     word[strcspn(word, " \t\r\n")] = '\0';
     if (*word == '\0' || *word == '#' || *word == ';')
     {
       continue;
     }
   
-    node *hashentry = malloc(sizeof(node));
+
     int hashval = hash_function(word);
-    strcpy(hashentry->word, (word));
+
 
     // If not collision, add it to the hashtable
     if (hashtable[hashval] == NULL)
     {
-      hashentry->next = NULL;
-      hashtable[hashval] = hashentry;
-      hashsize++;   
+      hashtable[hashval] = malloc(sizeof(node));
+      strcpy(hashtable[hashval]->word, word);
+      hashtable[hashval]->next = NULL;
+      hashsize++;  
     }
     else
     {
+      // printf("b");
       // if collision, add new node
+      node *hashentry = malloc(sizeof(node));
+      strcpy(hashentry->word, (word));
       hashentry->next = hashtable[hashval];
       hashtable[hashval] = hashentry;
       hashsize++;
 	  
     }	
        
-      
+    
   }
+  
   fclose(wordlist);
+ 
+  for (int k = 0; k < HASH_SIZE; k++)
+  {
+    if (hashtable[k] == NULL) free(hashtable[k]);
+
+  }
+
+
   return 1;
+  
+
 }
 
 
 bool check_word(const char* word, hashmap_t hashtable[])
 {
-  
-  
-  int wordlength = strlen(word);
-  if (wordlength > LENGTH+1)
-  {
-    return 1;
-  }
 
+  if (word[0] == '\0' || word == NULL) return 0;
+
+
+  int wordlength = strlen(word);
+  
 
   //check to ensure word is not number
-  for (int i = 0; i < wordlength; i++)
+  for (int i = 0; (i < wordlength); i++)
   {
     if ('0' <= word[i] && word[i] <= '9')
     {
@@ -182,6 +202,8 @@ bool check_word(const char* word, hashmap_t hashtable[])
   while ( (tempnode != NULL)) //Check hastable to see if it is not null
   {
 
+    if (tempnode->word == NULL) return 0;
+
     //printf("%s ", tempnode->word); 
     if (strcmp(word, tempnode->word) == 0)
     {
@@ -192,7 +214,6 @@ bool check_word(const char* word, hashmap_t hashtable[])
   
     else
     {
-   
   
       tempnode = tempnode->next; 
     }
@@ -220,10 +241,10 @@ bool check_word(const char* word, hashmap_t hashtable[])
   //printf("word2: %s ", word2);
   // check lowercase word against hash table
   index = hash_function(word2);
-  tempnode = hashtable[index]; 
+  tempnode = hashtable[index];
   while ( (tempnode != NULL)) //Check hastable to see if it is not null
   {
-    
+    if (tempnode->word == NULL) return 0;     
     if (strcmp(word2, tempnode->word) == 0)
     {
   
