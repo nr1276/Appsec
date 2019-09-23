@@ -10,10 +10,10 @@ int main(int argc, char* argv[])
 
 	hashmap_t hashtable[HASH_SIZE];
 
-	load_dictionary(argv[1], hashtable);
+	load_dictionary(argv[2], hashtable);
 
          char*misspelled[MAX_MISSPELLED];
-	 FILE *fp = fopen(argv[2], "r");
+	 FILE *fp = fopen(argv[1], "r");
 	 int num_misspelled = check_words(fp, hashtable, misspelled);
 
 	 for (int i = 0; i < num_misspelled; i++)
