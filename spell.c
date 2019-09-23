@@ -1,5 +1,5 @@
 // Naresh Ramlogan, nr1276
-
+// Final version
 #include "dictionary.h"
 #include "strip.c"
 #include <stdio.h>
